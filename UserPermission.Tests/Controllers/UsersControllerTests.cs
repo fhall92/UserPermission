@@ -131,5 +131,33 @@ namespace UserPermission.UnitTests.Controllers
             var result = await controller.AssignRole(Guid.NewGuid(), new AssignRoleDto { RoleName = "admin" });
             Assert.IsType<NotFoundResult>(result);
         }
+
+        [Fact]
+        public async Task Create_ReturnsBadRequest_WhenArgumentExceptionThrown()
+        {
+            var userService = new Mock<IUserService>();
+            userService.Setup(s => s.RegisterAsync(It.IsAny<UserCreateDto>(), default))
+                .ThrowsAsync(new ArgumentException("Invalid input"));
+
+            var controller = new UsersController(userService.Object);
+
+            var result = await controller.Create(new UserCreateDto { Name = "A", Email = "bad", Password = "pw" });
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Contains("Invalid input", badRequest.Value?.ToString());
+        }
+
+        [Fact]
+        public async Task AssignRole_ReturnsBadRequest_WhenArgumentExceptionThrown()
+        {
+            var userService = new Mock<IUserService>();
+            userService.Setup(s => s.AssignRoleAsync(It.IsAny<Guid>(), It.IsAny<string>(), default))
+                .ThrowsAsync(new ArgumentException("Invalid role"));
+
+            var controller = new UsersController(userService.Object);
+
+            var result = await controller.AssignRole(Guid.NewGuid(), new AssignRoleDto { RoleName = "badrole" });
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Contains("Invalid role", badRequest.Value?.ToString());
+        }
     }
 }
