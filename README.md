@@ -100,3 +100,4 @@ All endpoints accept and return `application/json`.
 - Uses in-memory database; no external DB required.
 - Passwords are hashed using SHA256 (for demo purposes only).
 - All endpoints require no authentication for simplicity.
+- HTML Test Coverage Report available as a downloadable artifact from the latest Built & Test Actions Workflow.
